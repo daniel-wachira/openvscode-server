@@ -1011,13 +1011,6 @@ export async function main(options: IServerOptions): Promise<void> {
 		let port = 3000;
 		if (parsedArgs.port) {
 			port = Number(parsedArgs.port);
-			if (isNaN(port)) {
-				logService.error('Port must be a number.');
-				process.exit(1);
-			} else if (!(port >= 0 && port < 65536)) {
-				logService.error('Port out of range.');
-				process.exit(1);
-			}
 		} else if (typeof options.port === 'number') {
 			port = options.port;
 		}
