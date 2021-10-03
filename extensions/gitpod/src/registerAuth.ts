@@ -93,7 +93,7 @@ function promiseFromEvent<T, U>(
 function promptToReload(msg?: string): void {
 	const action = 'Reload';
 
-	vscode.window.showInformationMessage(msg || `Reload VS Code for new code sync configuration to take effect.`, action)
+	vscode.window.showInformationMessage(msg || `Reload VS Code for the new Settings Sync configuration to take effect.`, action)
 		.then(selectedAction => {
 			if (selectedAction === action) {
 				vscode.commands.executeCommand('workbench.action.reloadWindow');
@@ -104,8 +104,9 @@ function promptToReload(msg?: string): void {
 /**
  * Adds an authenthication provider as a possible provider for code sync.
  * It adds some key configuration to the user settings, so that the user can choose the Gitpod provider when deciding what to use with setting sync.
+ * @param remove - indicates whether to add or remove the configuration
  */
-export async function addAuthProviderToSettings(): Promise<void> {
+export async function addAuthProviderToSettings(remove?: boolean): Promise<void> {
 	const syncStoreURL = `${baseURL}/code-sync`;
 	const config = vscode.workspace.getConfiguration();
 	const newConfig = {
@@ -119,6 +120,17 @@ export async function addAuthProviderToSettings(): Promise<void> {
 			}
 		}
 	};
+
+	if (remove) {
+		try {
+			await config.update('configurationSync.store', undefined, true);
+			promptToReload();
+		} catch (e) {
+			vscode.window.showErrorMessage(`Error setting up code sync config: ${e}`);
+		}
+		return;
+	}
+
 	try {
 		const currentConfig = await config.get('configurationSync.store');
 		if (JSON.stringify(currentConfig) !== JSON.stringify(newConfig)) {
@@ -238,6 +250,11 @@ function registerAuth(context: vscode.ExtensionContext, logger: (value: string) 
 		return session;
 	};
 
+	const disposable = vscode.commands.registerCommand('gitpod.auth.remove', () => {
+		addAuthProviderToSettings(true);
+	});
+	context.subscriptions.push(disposable);
+
 	async function createSession(_scopes: string[]): Promise<vscode.AuthenticationSession> {
 		const callbackUri = `${vscode.env.uriScheme}://gitpod.gitpod-desktop/complete-gitpod-auth`;
 		const gitpodScopes = new Set<string>([
@@ -314,7 +331,15 @@ function registerAuth(context: vscode.ExtensionContext, logger: (value: string) 
 		},
 	}, { supportsMultipleAccounts: false }));
 	logger('Pushed auth');
-	addAuthProviderToSettings();
+	const enabledSettingsSync = vscode.workspace.getConfiguration().get('configurationSync.store');
+	if (enabledSettingsSync === undefined || JSON.stringify(enabledSettingsSync) === '{}') {
+		vscode.window.showInformationMessage('Would you like to use Settings Sync with Gitpod?', 'Yes', 'No')
+			.then(selectedAction => {
+				if (selectedAction === 'Yes') {
+					addAuthProviderToSettings();
+				}
+			});
+	}
 }
 
 export { authCompletePath, registerAuth };

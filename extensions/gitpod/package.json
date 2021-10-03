@@ -47,8 +47,8 @@
 		},
 		"commands": [
 			{
-				"command": "gitpod.api.auth",
-				"title": "Authenticate with Gitpod"
+				"command": "gitpod.auth.remove",
+				"title": "Remove Gitpod from Settings Sync"
 			}
 		]
 	},
