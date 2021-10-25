@@ -61,7 +61,7 @@ _Note_: You can use [pre-releases](https://github.com/gitpod-io/openvscode-serve
 - Download and install [nodejs](https://nodejs.org/en/download/) including additional tools such as visual studio build tools.
 - From the project root, run:
 	```powershell
-	npm -g install node-gyp vscode-sqlite3 vscode-nsfw
+	npm -g install node-gyp vscode-sqlite3 vscode-nsfw yarn
 	$env:VSCODE_DEV='1'
 	$env:NODE_ENV='development'
 	yarn
