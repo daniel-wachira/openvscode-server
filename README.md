@@ -56,23 +56,15 @@ _Note_: Feel free to use the `nightly` tag to test the latest version, i.e. `git
 
 _Note_: You can use [pre-releases](https://github.com/gitpod-io/openvscode-server/releases) to test nightly changes.
 
-### Windows (Development)
+### Windows
 
-- Download and install [nodejs](https://nodejs.org/en/download/) including additional tools such as visual studio build tools.
-- From the project root, run:
+- Ensure powershell scripts execution policy is in bypass or unrestricted mode:
 	```powershell
-	npm -g install node-gyp vscode-sqlite3 vscode-nsfw yarn
-	$env:VSCODE_DEV='1'
-	$env:NODE_ENV='development'
-	yarn
-	yarn server:init
-	yarn gulp watch-init
+	Set-ExecutionPolicy Unrestricted -Force
 	```
-- In a second terminal run:
+- From the project root, run in powershell:
 	```powershell
-	$env:VSCODE_DEV='1'
-	$env:NODE_ENV='development'
-	node out/server.js
+	.\scripts\setup-windows.ps1
 	```
 - Visit [localhost:3000](http://localhost:3000).
 
