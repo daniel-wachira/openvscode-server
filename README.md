@@ -56,6 +56,18 @@ _Note_: Feel free to use the `nightly` tag to test the latest version, i.e. `git
 
 _Note_: You can use [pre-releases](https://github.com/gitpod-io/openvscode-server/releases) to test nightly changes.
 
+### Windows
+
+- Ensure powershell scripts execution policy is in bypass or unrestricted mode:
+	```powershell
+	Set-ExecutionPolicy Unrestricted -Force
+	```
+- From the project root, run in powershell:
+	```powershell
+	.\scripts\setup-windows.ps1
+	```
+- Visit [localhost:3000](http://localhost:3000).
+
 ### Deployment guides
 
 Please refer to [Guides](./docs/guides/) to learn how to deploy OpenVSCode Server to your cloud provider of choice.
