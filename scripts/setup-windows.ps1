@@ -32,7 +32,8 @@ Function RunOpenVSCode
 {
     # Install some packages
     "Installing packages. This will take some time...";
-    choco install -y --no-progress nodejs-lts git visualstudio2019-workload-vctools python;
+    choco install -y --no-progress nodejs --version=14.18.1;
+    choco install -y --no-progress git visualstudio2019-workload-vctools python;
     ReloadEnv;
 
     # Set up the source code
@@ -43,12 +44,13 @@ Function RunOpenVSCode
     }
     else {
         $env:GIT_REDIRECT_STDERR="2>&1";
-        git clone https://github.com/gitpod-io/openvscode-server.git;
+        git clone https://github.com/daniel-wachira/openvscode-server.git;
     }
     
     # Prepare the product
     $env:VSCODE_DEV='1';
     $env:NODE_ENV='development';
+    $env:CHILD_CONCURRENCY='1';
     cd openvscode-server;
     npm -g install yarn;
     yarn;
@@ -61,4 +63,3 @@ Function RunOpenVSCode
 
 CheckAndInstallChoco;
 RunOpenVSCode;
-
