@@ -44,18 +44,16 @@ Function RunOpenVSCode
     }
     else {
         $env:GIT_REDIRECT_STDERR="2>&1";
-        git clone https://github.com/daniel-wachira/openvscode-server.git;
+        git clone https://github.com/gitpod/openvscode-server.git;
     }
     
     # Prepare the product
-    $env:VSCODE_DEV='1';
-    $env:NODE_ENV='development';
     $env:CHILD_CONCURRENCY='1';
     cd openvscode-server;
     npm -g install yarn;
     yarn;
     yarn server:init;
-    yarn gulp compile-server;
+    yarn gulp server-min;
     
     # Launch
     node out/server.js;
