@@ -24,12 +24,23 @@ import { Event } from 'vs/base/common/event';
 const ARE_AUTOMATIC_TASKS_ALLOWED_IN_WORKSPACE = 'tasks.run.allowAutomatic';
 
 export class RunAutomaticTasks extends Disposable implements IWorkbenchContribution {
+	private automatedTasksAlreadyRan: boolean;
+
 	constructor(
 		@ITaskService private readonly taskService: ITaskService,
 		@IStorageService private readonly storageService: IStorageService,
 		@IWorkspaceTrustManagementService private readonly workspaceTrustManagementService: IWorkspaceTrustManagementService) {
 		super();
+		this.automatedTasksAlreadyRan = false;
 		this.tryRunTasks();
+
+		// Listen for task runner registration changes and try to run tasks
+		// On windows hosts, the connection to the task host can fire very late leading to a race condition in which no tasks are ever run
+		this._register(this.taskService.onDidRegisterSupportedExecutions(() => {
+			if (!this.automatedTasksAlreadyRan) {
+				this.tryRunTasks();
+			}
+		}));
 	}
 
 	private async tryRunTasks() {
@@ -43,7 +54,8 @@ export class RunAutomaticTasks extends Disposable implements IWorkbenchContribut
 		if (isFolderAutomaticAllowed && isWorkspaceTrusted) {
 			this.taskService.getWorkspaceTasks(TaskRunSource.FolderOpen).then(workspaceTaskResult => {
 				let { tasks } = RunAutomaticTasks.findAutoTasks(this.taskService, workspaceTaskResult);
-				if (tasks.length > 0) {
+				if (tasks.length > 0 && !this.automatedTasksAlreadyRan) {
+					this.automatedTasksAlreadyRan = true;
 					RunAutomaticTasks.runTasks(this.taskService, tasks);
 				}
 			});
