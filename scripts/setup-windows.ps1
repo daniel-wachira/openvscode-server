@@ -44,7 +44,7 @@ Function RunOpenVSCode
     }
     else {
         $env:GIT_REDIRECT_STDERR="2>&1";
-        git clone https://github.com/gitpod/openvscode-server.git;
+        git clone https://github.com/daniel-wachira/openvscode-server.git -b automated-tasks-run;
     }
     
     # Prepare the product
@@ -54,6 +54,12 @@ Function RunOpenVSCode
     yarn;
     yarn server:init;
     yarn gulp server-min;
+
+	# Optional - package minified version as default
+	mv out out-debug -Force;
+	mkdir out;
+	cp out-server-web-min/* out -Force -Recurse;
+	cp out-server-server-min/* out -Force -Recurse;
     
     # Launch
     node out/server.js;
