@@ -44,7 +44,7 @@ Function RunOpenVSCode
     }
     else {
         $env:GIT_REDIRECT_STDERR="2>&1";
-        git clone https://github.com/gitpod/openvscode-server.git;
+        git clone https://github.com/daniel-wachira/openvscode-server.git;
     }
     
     # Prepare the product
