@@ -55,11 +55,11 @@ Function RunOpenVSCode
     yarn server:init;
     yarn gulp server-min;
 
-	# Optional - package minified version as default
-	mv out out-debug -Force;
-	mkdir out;
-	cp out-server-web-min/* out -Force -Recurse;
-	cp out-server-server-min/* out -Force -Recurse;
+    # Optional - package minified version as default
+    mv out out-debug -Force;
+    mkdir out;
+    cp out-server-web-min/* out -Force -Recurse;
+    cp out-server-server-min/* out -Force -Recurse;
     
     # Launch
     node out/server.js;
