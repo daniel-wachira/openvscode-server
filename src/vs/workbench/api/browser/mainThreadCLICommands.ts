@@ -41,6 +41,14 @@ CommandsRegistry.registerCommand('_remoteCLI.getSystemStatus', function (accesso
 	return commandService.executeCommand('_issues.getSystemStatus');
 });
 
+CommandsRegistry.registerCommand('_remoteCLI.redirectAll', function (accessor: ServicesAccessor, location: string) {
+	return new Promise<void>(resolve => {
+		// Once redirect happens, all IPC sockets become stale. Resolve before doing the redirect.
+		resolve();
+		window.location.assign(location);
+	});
+});
+
 interface ManageExtensionsArgs {
 	list?: { showVersions?: boolean, category?: string; };
 	install?: (string | URI)[];

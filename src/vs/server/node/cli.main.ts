@@ -39,7 +39,8 @@ const OPTIONS_KEYS: (keyof typeof ALL_OPTIONS)[] = [
 	'verbose'
 ];
 export interface ServerNativeParsedArgs extends NativeParsedArgs {
-	'openExternal'?: string[]
+	'openExternal'?: string[],
+	'redirect-all-clients'?: string
 }
 
 export interface ServerCliOptions<T extends ServerNativeParsedArgs> {
@@ -94,6 +95,14 @@ async function doMain<T extends ServerNativeParsedArgs = ServerNativeParsedArgs>
 		await sendCommand(options.createRequestOptions(), {
 			type: 'openExternal',
 			uris: args['openExternal']
+		});
+	}
+
+	// redirect all windows (shutdown procedure)
+	else if (args['redirect-all-clients']) {
+		await sendCommand(options.createRequestOptions(), {
+			type: 'redirect-all-clients',
+			location: args['redirect-all-clients']
 		});
 	}
 
@@ -194,6 +203,9 @@ export const OPTIONS: OptionDescriptions<ServerNativeParsedArgs> = {
 	_: ALL_OPTIONS['_'],
 	'openExternal': {
 		type: 'string[]'
+	},
+	'redirect-all-clients': {
+		type: 'string'
 	}
 };
 for (const key of OPTIONS_KEYS) {

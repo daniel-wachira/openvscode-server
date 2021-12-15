@@ -41,7 +41,12 @@ export interface ExtensionManagementPipeArgs {
 	force?: boolean;
 }
 
-export type PipeCommand = OpenCommandPipeArgs | StatusPipeArgs | OpenExternalCommandPipeArgs | ExtensionManagementPipeArgs;
+export interface RedirectOpenWindowsArgs {
+	type: 'redirect-all-clients';
+	location: string;
+}
+
+export type PipeCommand = OpenCommandPipeArgs | StatusPipeArgs | OpenExternalCommandPipeArgs | ExtensionManagementPipeArgs | RedirectOpenWindowsArgs;
 
 export interface ICommandsExecuter {
 	executeCommand<T>(id: string, ...args: any[]): Promise<T>;
@@ -89,6 +94,9 @@ export class CLIServerBase {
 					break;
 				case 'openExternal':
 					this.openExternal(data, res);
+					break;
+				case 'redirect-all-clients':
+					this.redirectOpenWindows(data, res);
 					break;
 				case 'status':
 					this.getStatus(data, res);
@@ -151,6 +159,12 @@ export class CLIServerBase {
 			const urioOpen = uri.scheme === 'file' ? uri : uriString; // workaround for #112577
 			await this._commands.executeCommand('_remoteCLI.openExternal', urioOpen);
 		}
+		res.writeHead(200);
+		res.end();
+	}
+
+	private async redirectOpenWindows(data: RedirectOpenWindowsArgs, res: http.ServerResponse) {
+		await this._commands.executeCommand('_remoteCLI.redirectAll', data.location);
 		res.writeHead(200);
 		res.end();
 	}
