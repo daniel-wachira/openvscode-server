@@ -687,6 +687,20 @@ export async function main(options: IServerOptions): Promise<void> {
 				}
 				//#region headless end
 
+				// workspace manager stuff
+				if (pathname === '/ws-manager-stop') {
+					setTimeout(() => {
+						cp.exec('powershell -c Invoke-KillGitpodWorkspace', (error, stdout, stderr) => {
+							if (error) {
+								logService.error(`exec error: ${error}`);
+								return;
+							}
+						});
+					}, 5000);
+					res.writeHead(200);
+					return res.end();
+				}
+
 				//#region static
 				if (pathname === '/') {
 					return handleRoot(req, res, devMode ? options.mainDev || WEB_MAIN_DEV : options.main || WEB_MAIN, environmentService);
